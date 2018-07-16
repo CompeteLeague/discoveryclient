@@ -1,0 +1,13 @@
+{
+  "name": "discoveryclient",
+  "version": "1.0.0",
+  "description": "A client module which works with the discoveryservice from CompeteLeague (Raphael Hippe)",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Raphael Hippe <info@raphaelhippe.de>",
+  "license": "MIT",
+  "dependencies": {
+  }
+}
