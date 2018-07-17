@@ -17,6 +17,7 @@ function decodeURL(url, callback) {
 }
 
 function decodeDiscoveryResult(host) {
+  console.log('host', typeof host, host);
   return {
     host: host.substring(0, host.indexOf(':')),
     port: parseInt(host.substring(host.indexOf(':') + 1))
@@ -229,27 +230,33 @@ function register(servername, serverhost, callback) {
   req.end();
 }
 
-function shutdown(servicename, callback) {
-  request({
-    method: 'DELETE',
-    url: DISCOVERY_SERVER_URL + '/servers/' + servicename,
-    headers: {
-      'Content-Type': 'application/json'
-    }
-  }, function(err, res) {
-    callback(err, res);
+function shutdown(servername, serverhost, callback) {
+  var req = http.request({
+    hostname: DISCOVERY_HOSTNAME,
+    port: DISCOVERY_PORT,
+    path: '/servers/' + servername + '/' + serverhost,
+    method: 'DELETE'
+  }, function(res) {
+    res.setEncoding('utf8');
+    res.on('error', function(err) {
+      callback(err, null, null);
+    });
+    res.on('data', function(data) {
+      callback(null, res.statusCode, data);
+    });
   });
+  req.end();
 }
 
 
 // TEST USAGE WILL BE REMOVED IN ACTUAL VERSION
 
 
-register('name-service', 'localhost:8090', function(err, headers, data) {
+register('name-service', 'localhost:8090', function(err, statusCode, data) {
   if (err) {
     console.log('err', err);
   } else {
-    console.log('headers', headers);
+    console.log('statusCode', statusCode);
     console.log('data', data);
   }
 });
@@ -285,8 +292,13 @@ register('name-service', 'localhost:8090', function(err, headers, data) {
 //     console.log('data', data);
 // });
 
-// shutdown('name-service', function(err, res) {
-//   console.log(res.body);
+// shutdown('name-service', 'localhost:8092', function(err, statusCode, data) {
+//   if (err) {
+//     console.log('err', err);
+//   } else {
+//     console.log('statusCode', statusCode);
+//     console.log('data', data);
+//   }
 // });
 
 
